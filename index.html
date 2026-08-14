@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elegí tu curso - Educación Digital</title>
+    <!-- Fuentes Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* ==========================================================================
+           1. VARIABLES GLOBALES (PALETA DE COLORES Y CONFIGURACIÓN)
+           ========================================================================== */
+        :root {
+            --azul-oscuro: #052f40;
+            --amarillo: #ffcc00;
+            --gris-claro: #efefef;
+            --gris-oscuro: #3c3c3b;
+            --verde-agua: #c6f0ea;
+            
+            --blanco: #ffffff;
+            --sombra-card: 0 10px 25px -5px rgba(5, 47, 64, 0.08);
+            --sombra-hover: 0 12px 20px -5px rgba(5, 47, 64, 0.15);
+            --transicion: all 0.25s ease-in-out;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Open Sans', 'Roboto', sans-serif;
+            background-color: var(--gris-claro);
+            color: var(--gris-oscuro);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ==========================================================================
+           2. HEADER Y NAVEGACIÓN
+           ========================================================================== */
+        .site-header {
+            background-color: var(--azul-oscuro);
+            color: var(--blanco);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        /* <!-- REEMPLAZAR AQUÍ TU LOGO EN EL HEADER --> */
+        .logo-img {
+            max-height: 48px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .main-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .main-nav a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transicion);
+            padding: 0.5rem 0;
+        }
+
+        .main-nav a:hover {
+            color: var(--amarillo);
+        }
+
+        .header-line {
+            height: 4px;
+            background-color: var(--amarillo);
+            width: 100%;
+        }
+
+        /* ==========================================================================
+           3. MAIN CONTAINER & RECOMENDADOR INTERACTIVO
+           ========================================================================== */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1.5rem;
+        }
+
+        .recommender-container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 2.25rem;
+            color: var(--azul-oscuro);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--gris-oscuro);
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        /* Indicadores de Progreso */
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background-color: var(--gris-claro);
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--azul-oscuro);
+            width: 33%;
+            transition: width 0.4s ease;
+            border-radius: 10px;
+        }
+
+        /* Card Contenedora Principal */
+        .interactive-card {
+            background-color: var(--blanco);
+            border: 1px solid rgba(5, 47, 64, 0.1);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--sombra-card);
+            position: relative;
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            perspective: 1000px;
+        }
+
+        .question-step {
+            display: none;
+            opacity: 0;
+            width: 100%;
+            transition: opacity 0.25s ease-in-out;
+        }
+
+        .question-step.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .question-text {
+            font-size: 1.35rem;
+            color: var(--azul-oscuro);
+            font-weight: 700;
+            margin-bottom: 1.75rem;
+            text-align: center;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+        }
+
+        /* Botones de Opción Ajustados: Aprovechamiento completo del espacio */
+        .option-btn {
+            background-color: var(--blanco);
+            border: 2px solid var(--gris-claro);
+            border-radius: 50px;
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-family: inherit;
+            font-size: 0.98rem;
+            color: var(--gris-oscuro);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transicion);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            text-wrap: normal; /* Asegura el uso natural de todo el ancho horizontal */
+        }
+
+        .option-btn span {
+            flex: 1;
+            text-align: left;
+        }
+
+        .option-btn:hover {
+            border-color: var(--verde-agua);
+            background-color: var(--verde-agua);
+            color: var(--azul-oscuro);
+            transform: translateY(-2px);
+            box-shadow: var(--sombra-hover);
+        }
+
+        .option-btn::after {
+            content: '→';
+            font-size: 1.2rem;
+            color: var(--azul-oscuro);
+            opacity: 0.5;
+            transition: var(--transicion);
+            flex-shrink: 0;
+        }
+
+        .option-btn:hover::after {
+            opacity: 1;
+            transform: translateX(4px);
+        }
+
+        /* Navegación interna del Test */
+        .step-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--gris-claro);
+        }
+
+        .btn-back {
+            background: none;
+            border: none;
+            color: var(--gris-oscuro);
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.95rem;
+            transition: var(--transicion);
+        }
+
+        .btn-back:hover {
+            color: var(--azul-oscuro);
+        }
+
+        /* ==========================================================================
+           4. TARJETA DESTACADA DE RESULTADOS
+           ========================================================================== */
+        .result-container {
+            text-align: center;
+        }
+
+        .result-badge {
+            display: inline-block;
+            background-color: var(--amarillo);
+            color: var(--azul-oscuro);
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 6px 18px;
+            border-radius: 20px;
+            margin-bottom: 1.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(255, 204, 0, 0.4);
+        }
+
+        .course-card-result {
+            background: linear-gradient(135deg, var(--verde-agua) 0%, #e0f8f5 100%);
+            border: 2px solid var(--azul-oscuro);
+            border-radius: 20px;
+            padding: 2.25rem;
+            margin: 1.5rem 0;
+            text-align: left;
+            box-shadow: 0 15px 30px -5px rgba(5, 47, 64, 0.18);
+            position: relative;
+            overflow: hidden;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .course-card-result.reveal-card {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .course-card-result::before {
+            content: '★ RECOMENDADO';
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: var(--azul-oscuro);
+            color: var(--amarillo);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-bottom-left-radius: 12px;
+            letter-spacing: 1px;
+        }
+
+        .course-title {
+            font-size: 1.6rem;
+            color: var(--azul-oscuro);
+            font-weight: 700;
+            margin-bottom: 0.85rem;
+            padding-right: 110px;
+        }
+
+        .course-desc {
+            color: var(--gris-oscuro);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+        }
+
+        .course-secondary {
+            margin-top: 1.5rem;
+            padding-top: 1.25rem;
+            border-top: 2px dashed rgba(5, 47, 64, 0.2);
+        }
+
+        .course-secondary-title {
+            font-size: 0.85rem;
+            color: var(--azul-oscuro);
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background-color: var(--azul-oscuro);
+            color: var(--blanco);
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transicion);
+            box-shadow: 0 4px 12px rgba(5, 47, 64, 0.2);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--amarillo);
+            color: var(--azul-oscuro);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--azul-oscuro);
+            border: 2px solid var(--azul-oscuro);
+            padding: 0.9rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transicion);
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--blanco);
+            transform: translateY(-2px);
+        }
+
+        /* Vista alternativa para mostrar la totalidad de cursos */
+        .all-courses-view {
+            display: none;
+        }
+
+        .all-courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .course-item-card {
+            background: var(--blanco);
+            border: 1px solid var(--gris-claro);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: var(--transicion);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .course-item-card:hover {
+            border-color: var(--verde-agua);
+            transform: translateY(-4px);
+            box-shadow: var(--sombra-hover);
+        }
+
+        /* ==========================================================================
+           5. FOOTER INSTITUCIONAL
+           ========================================================================== */
+        .site-footer {
+            background-color: var(--azul-oscuro);
+            color: var(--blanco);
+            padding: 3rem 1.5rem 1.5rem 1.5rem;
+            margin-top: auto;
+            border-top: 4px solid var(--amarillo);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .footer-logo-area {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* <!-- REEMPLAZAR AQUÍ TU LOGO EN EL FOOTER --> */
+        .footer-logo-img {
+            max-height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .footer-text {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .footer-links-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--amarillo);
+        }
+
+        .footer-links-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .footer-links-list a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transicion);
+        }
+
+        .footer-links-list a:hover {
+            color: var(--amarillo);
+            padding-left: 4px;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .main-nav ul {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .interactive-card {
+                padding: 1.5rem;
+                min-height: auto;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .course-title {
+                padding-right: 0;
+                margin-top: 1rem;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================================================
+         HEADER / NAVEGACIÓN INSTITUCIONAL
+         ========================================================================== -->
+    <header class="site-header">
+        <div class="header-container">
+            <a href="#" class="logo-container">
+                <!-- 
+                  ====================================================================
+                  [INSTRUCCIÓN LOGO HEADER] 
+                  Cargá tu imagen acá cambiando el valor de src="tu-logo-header.png"
+                  ====================================================================
+                -->
+                <img src="tu-logo-header.png" alt="Logo Educación Digital" class="logo-img">
+            </a>
+            
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#">Inicio</a></li>
+                    <li><a href="#">Propuestas</a></li>
+                    <li><a href="#">Recursos</a></li>
+                    <li><a href="#">Contacto</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="header-line"></div>
+    </header>
+
+    <!-- ==========================================================================
+         CONTENIDO PRINCIPAL - RECOMENDADOR "Elegí tu curso"
+         ========================================================================== -->
+    <main>
+        <div class="recommender-container">
+            
+            <!-- Encabezado Principal -->
+            <div class="section-header">
+                <h1 class="section-title">Elegí tu curso</h1>
+                <p class="section-subtitle">Respondé las preguntas para conocer la propuesta que mejor se adapta a vos.</p>
+            </div>
+
+            <!-- Card Interactivo con Preguntas y Recomendaciones -->
+            <div class="interactive-card">
+                
+                <!-- Barra de Progreso -->
+                <div class="progress-bar-container" id="progressBar">
+                    <div class="progress-bar-fill" id="progressFill"></div>
+                </div>
+
+                <!-- PASO 1: Pregunta Principal -->
+                <div class="question-step active" id="step1">
+                    <h2 class="question-text">¿Cuál es tu principal objetivo o necesidad actual en la escuela?</h2>
+                    <div class="options-grid">
+                        <button class="option-btn" onclick="selectOption('A')">
+                            <span>Quiero optimizar tiempo, organizar la gestión o usar herramientas digitales en mi rol.</span>
+                        </button>
+                        <button class="option-btn" onclick="selectOption('B')">
+                            <span>Quiero incorporar la Inteligencia Artificial (IA) en mis clases y propuestas didácticas.</span>
+                        </button>
+                        <button class="option-btn" onclick="selectOption('C')">
+                            <span>Busco responder a desafíos actuales del aula (celulares, inclusión, protección digital).</span>
+                        </button>
+                    </div>
+                    <div class="step-navigation" style="justify-content: flex-end;">
+                        <button class="btn-back" onclick="showAllCoursesView()" style="color: var(--azul-oscuro);">
+                            Prefiero ver la oferta completa de cursos →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PASO 2A: Subopciones para Gestión y Organización -->
+                <div class="question-step" id="step2A">
+                    <h2 class="question-text">¿Qué tipo de función o tarea querés potenciar?</h2>
+                    <div class="options-grid">
+                        <button class="option-btn" onclick="showResult('A1')">
+                            <span>Tengo un rol directivo/supervisión y quiero integrar IA para la toma de decisiones, documentos e informes.</span>
+                        </button>
+                        <button class="option-btn" onclick="showResult('A2')">
+                            <span>Quiero organizar la tarea diaria y la planificación institucional con herramientas colaborativas.</span>
+                        </button>
+                        <button class="option-btn" onclick="showResult('A3')">
+                            <span>Quiero incorporar la IA para automatizar mi planificación y crear recursos didácticos en Primaria.</span>
+                        </button>
+                    </div>
+                    <div class="step-navigation">
+                        <button class="btn-back" onclick="goToStep(1)">← Volver a la pregunta anterior</button>
+                    </div>
+                </div>
+
+                <!-- PASO 2B: Subopciones para Innovación e IA en el Aula -->
+                <div class="question-step" id="step2B">
+                    <h2 class="question-text">¿En qué área o metodología te gustaría enfocar la innovación?</h2>
+                    <div class="options-grid">
+                        <button class="option-btn" onclick="showResult('B1')">
+                            <span>Quiero diseñar proyectos prácticos y crear una secuencia didáctica real con IA generativa.</span>
+                        </button>
+                        <button class="option-btn" onclick="showResult('B2')">
+                            <span>Me interesa el juego, la gamificación y cómo usar IA para motivar a mis estudiantes.</span>
+                        </button>
+                        <button class="option-btn" onclick="showResult('B3')">
+                            <span>Quiero trabajar con el enfoque STEM+ articulando ciencia, tecnología, ingeniería y matemática.</span>
+                        </button>
+                        <button class="option-btn" onclick="showResult('B4')">
+                            <span>Busco integrar geometría y álgebra de forma interactiva en Matemática y Ciencias.</span>
+                        </button>
+                    </div>
+                    <div class="step-navigation">
+                        <button class="btn-back" onclick="goToStep(1)">← Volver a la pregunta anterior</button>
+                    </div>
+                </div>
+
+                <!-- PASO 2C: Subopciones para Desafíos del Aula e Inclusión -->
+                <div class="question-step" id="step2C">
+                    <h2 class="question-text">¿Cuál de estas situaciones querés abordar en tu comunidad educativa?</h2>
+                    <div class="options-grid">
+                        <button class="option-btn" onclick="showResult('C1')">
+                            <span>Necesito estrategias para gestionar la atención y reemplazar el uso del celular en las aulas.</span>
+                        </button>
+                        <button class="option-btn" onclick="showResult('C2')">
+                            <span>Quiero usar la IA como tecnología de apoyo para la inclusión y accesibilidad de estudiantes con barreras de aprendizaje.</span>
+                        </button>
+                        <button class="option-btn" onclick="showResult('C3')">
+                            <span>Me preocupa la convivencia digital, el cuidado y la protección de niños y adolescentes en entornos virtuales.</span>
+                        </button>
+                        <button class="option-btn" onclick="showResult('C4')">
+                            <span>Enseño a jóvenes/adultos y quiero trabajar ciudadanía digital y empleabilidad con tecnología e IA.</span>
+                        </button>
+                    </div>
+                    <div class="step-navigation">
+                        <button class="btn-back" onclick="goToStep(1)">← Volver a la pregunta anterior</button>
+                    </div>
+                </div>
+
+                <!-- PASO FINAL: Resultado de Recomendación -->
+                <div class="question-step" id="stepResult">
+                    <div class="result-container">
+                        <span class="result-badge">✨ Tu Resultado Personalizado</span>
+                        <h2 style="font-size: 1.6rem; color: var(--azul-oscuro); margin-bottom: 0.5rem;">
+                            ¡Encontramos la propuesta ideal para vos!
+                        </h2>
+                        
+                        <!-- Tarjeta de Curso Principal Recomendado con Animación -->
+                        <div class="course-card-result" id="resultCard">
+                            <h3 class="course-title" id="resultTitle">Título del curso</h3>
+                            <p class="course-desc" id="resultDesc">Descripción breve del curso...</p>
+
+                            <!-- Curso Secundario Opcional -->
+                            <div class="course-secondary" id="secondaryContainer" style="display: none;">
+                                <div class="course-secondary-title">Propuesta complementaria recomendada:</div>
+                                <strong id="secondaryTitle" style="color: var(--azul-oscuro);"></strong>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn-primary" onclick="restartQuiz()">
+                                🔄 Volver a realizar el test
+                            </button>
+                            <button class="btn-secondary" onclick="showAllCoursesView()">
+                                Ver toda la oferta disponible
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VISTA ALTERNATIVA: Todos los Cursos -->
+                <div class="all-courses-view" id="allCoursesStep">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 style="font-size: 1.4rem; color: var(--azul-oscuro);">Todos los cursos de este semestre</h2>
+                        <button class="btn-back" onclick="restartQuiz()">← Volver al recomendador</button>
+                    </div>
+                    <div class="all-courses-grid" id="allCoursesGrid">
+                        <!-- Se llena dinámicamente desde JavaScript -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- ==========================================================================
+         FOOTER / PIE DE PÁGINA INSTITUCIONAL
+         ========================================================================== -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-logo-area">
+                <!-- 
+                  ====================================================================
+                  [INSTRUCCIÓN LOGO FOOTER] 
+                  Cargá tu imagen acá cambiando el valor de src="tu-logo-footer.png"
+                  ====================================================================
+                -->
+                <img src="tu-logo-footer.png" alt="Logo Educación Digital" class="footer-logo-img">
+                <p class="footer-text">
+                    Ministerio de Educación - Gobierno de la Ciudad Autónoma de Buenos Aires. Potenciando la innovación pedagógica y la formación docente.
+                </p>
+            </div>
+
+            <div>
+                <h4 class="footer-links-title">Enlaces Útiles</h4>
+                <ul class="footer-links-list">
+                    <li><a href="#">Escuela de Maestros</a></li>
+                    <li><a href="#">Campus Virtual</a></li>
+                    <li><a href="#">Plan BA Aprende</a></li>
+                    <li><a href="#">Inscripciones en línea</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="footer-links-title">Legales y Ayuda</h4>
+                <ul class="footer-links-list">
+                    <li><a href="#">Términos y Condiciones</a></li>
+                    <li><a href="#">Políticas de Privacidad</a></li>
+                    <li><a href="#">Preguntas Frecuentes</a></li>
+                    <li><a href="#">Mesa de Ayuda</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div>&copy; 2026 Educación Digital - BA Aprende. Todos los derechos reservados.</div>
+            <div>Calle Perette 750 4to piso | 25 de Mayo 444 1er piso</div>
+        </div>
+    </footer>
+
+    <!-- ==========================================================================
+         LÓGICA EN JAVASCRIPT
+         ========================================================================== -->
+    <script>
+        const coursesData = {
+            "A1": {
+                title: "IA para la Gestión Educativa",
+                desc: "Dirigido a supervisores/as y equipos directivos para integrar la Inteligencia Artificial y herramientas digitales en la gestión escolar de forma crítica, ética y estratégica. Incluye diseño de documentos, presentaciones y análisis de datos con IA.",
+                secondary: "Herramientas colaborativas para la gestión"
+            },
+            "A2": {
+                title: "Herramientas colaborativas para la gestión",
+                desc: "Ofrece orientaciones sobre cómo organizar la tarea diaria y la gestión educativa mediante el uso y creación con distintas herramientas digitales para fortalecer el liderazgo y el seguimiento pedagógico.",
+                secondary: null
+            },
+            "A3": {
+                title: "Inspirar con IA: Estrategias pedagógicas para el Nivel Primario",
+                desc: "Espacio de formación reflexivo para implementar IA en Nivel Primario, explorando herramientas generativas para optimizar la planificación y la creación de recursos didácticos originales.",
+                secondary: null
+            },
+            "B1": {
+                title: "Desarrollo de proyectos prácticos con aplicaciones de IA generativa",
+                desc: "Propone explorar de forma crítica y creativa herramientas de IA generativa para el diseño de secuencias didácticas aplicables al aula y la producción colaborativa de un ebook colectivo.",
+                secondary: null
+            },
+            "B2": {
+                title: "Diseño de experiencias gamificadas con IA",
+                desc: "Desarrolla capacidades para diseñar, implementar y evaluar propuestas pedagógicas gamificadas que integren bialfabetización y uso crítico de la inteligencia artificial según el Plan BA Aprende.",
+                secondary: null
+            },
+            "B3": {
+                title: "Enseñar con STEM+",
+                desc: "Propone integrar saberes de Ciencia, Tecnología, Ingeniería y Matemática en torno al abordaje de problemas cercanos a la vida cotidiana, articulando resolución de problemas y diseño.",
+                secondary: null
+            },
+            "B4": {
+                title: "Geogebra en la Escuela",
+                desc: "Fortalece las competencias tecnológicas para el uso de GeoGebra de manera transversal en Matemática y Ciencias, facilitando la exploración interactiva de geometría y álgebra.",
+                secondary: null
+            },
+            "C1": {
+                title: "Estrategias para reemplazar el celular en las aulas",
+                desc: "Analiza el impacto de los celulares en la escuela en el marco de la Resolución N° 258-MEDGC/26, brindando formas de intervención pedagógica para priorizar la atención y los vínculos presenciales.",
+                secondary: null
+            },
+            "C2": {
+                title: "Inteligencia Artificial para la accesibilidad e inclusión educativa",
+                desc: "Aborda la IA como tecnología de apoyo para la accesibilidad de contenidos, lectura, escritura y comunicación en estudiantes con barreras para el aprendizaje.",
+                secondary: null
+            },
+            "C3": {
+                title: "Estrategias para la Protección Digital Infantil y Adolescente",
+                desc: "Formación desde un enfoque de derechos y cuidado para construir entornos digitales seguros, reconociendo oportunidades y riesgos que requieren regulación y habilidades socioemocionales.",
+                secondary: null
+            },
+            "C4": {
+                title: "IA en la Educación de Adultos",
+                desc: "Brinda a docentes de la Modalidad Adultos herramientas basadas en IA para potenciar propuestas vinculadas con ciudadanía digital, empleabilidad y uso productivo de la tecnología.",
+                secondary: null
+            }
+        };
+
+        function goToStep(stepId) {
+            const currentSteps = document.querySelectorAll('.question-step');
+            const targetStep = typeof stepId === 'number' ? document.getElementById('step' + stepId) : document.getElementById(stepId);
+
+            currentSteps.forEach(step => {
+                step.classList.remove('active');
+            });
+
+            document.getElementById('allCoursesStep').style.display = 'none';
+            document.getElementById('progressBar').style.display = 'block';
+
+            let progress = 33;
+            if (typeof stepId === 'string' && stepId.startsWith('step2')) progress = 66;
+            if (stepId === 'stepResult') progress = 100;
+
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            if (targetStep) {
+                targetStep.classList.add('active');
+            }
+        }
+
+        function selectOption(option) {
+            if (option === 'A') goToStep('step2A');
+            if (option === 'B') goToStep('step2B');
+            if (option === 'C') goToStep('step2C');
+        }
+
+        function showResult(code) {
+            const course = coursesData[code];
+            if (!course) return;
+
+            const resultCard = document.getElementById('resultCard');
+            resultCard.classList.remove('reveal-card');
+
+            document.getElementById('resultTitle').textContent = course.title;
+            document.getElementById('resultDesc').textContent = course.desc;
+
+            const secondaryBox = document.getElementById('secondaryContainer');
+            if (course.secondary) {
+                document.getElementById('secondaryTitle').textContent = course.secondary;
+                secondaryBox.style.display = 'block';
+            } else {
+                secondaryBox.style.display = 'none';
+            }
+
+            goToStep('stepResult');
+
+            setTimeout(() => {
+                resultCard.classList.add('reveal-card');
+            }, 50);
+        }
+
+        function restartQuiz() {
+            const resultCard = document.getElementById('resultCard');
+            resultCard.classList.remove('reveal-card');
+            goToStep(1);
+        }
+
+        function showAllCoursesView() {
+            document.querySelectorAll('.question-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.getElementById('progressBar').style.display = 'none';
+            
+            const grid = document.getElementById('allCoursesGrid');
+            grid.innerHTML = '';
+
+            Object.values(coursesData).forEach(course => {
+                const card = document.createElement('div');
+                card.className = 'course-item-card';
+                card.innerHTML = `
+                    <div>
+                        <h3 style="font-size: 1.15rem; color: var(--azul-oscuro); margin-bottom: 0.5rem; font-weight:700;">${course.title}</h3>
+                        <p style="font-size: 0.9rem; color: var(--gris-oscuro); line-height: 1.5;">${course.desc}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            document.getElementById('allCoursesStep').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
